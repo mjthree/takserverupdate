@@ -202,7 +202,3 @@ The ATAK client will now check this URL for available plugins and apps. It will 
 - If an APK cannot be processed, it will be skipped with an error message
 - The `product.infz` file must be accessible via HTTP/HTTPS from your TAK server's web content directory
 - On Linux, ensure the shell script has execute permissions: `chmod +x build-update.sh`
-
-## Credits
-
-This tool was inspired by and references the implementation patterns from the original TAK update server project. The product.inf format and APK metadata extraction logic were developed based on the TAK update protocol specifications.
