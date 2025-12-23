@@ -17,28 +17,28 @@ These files are required for ATAK to recognize and download updates from your TA
 
 ## Installation
 
-### Option 1: Install from GitHub Packages (Recommended)
+### Option 1: Download from GitHub Releases (Recommended)
 
-1. Create or edit `.npmrc` in your home directory with:
-   ```
-   @mjthree:registry=https://npm.pkg.github.com
-   ```
+1. Go to the [Releases page](https://github.com/mjthree/takserverupdate/releases)
+2. Download the latest release archive (`.tar.gz` for Linux, `.zip` for Windows)
+3. Extract the archive
+4. Open a terminal/command prompt in the extracted `tak-update-builder` folder
+5. Run: `npm install`
 
-2. Install the package:
+**Linux users:** After installation, make the shell script executable:
+```bash
+chmod +x build-update.sh
+```
+
+### Option 2: Clone from Repository
+
+1. Clone this repository:
    ```bash
-   npm install -g @mjthree/takserverupdate
+   git clone https://github.com/mjthree/takserverupdate.git
+   cd takserverupdate/tak-update-builder
    ```
 
-3. Run it from anywhere:
-   ```bash
-   tak-update-builder [folder_path]
-   ```
-
-### Option 2: Install from Repository
-
-1. Clone this repository or download the `tak-update-builder` folder
-2. Open a terminal/command prompt in the `tak-update-builder` folder
-3. Run: `npm install`
+2. Run: `npm install`
 
 **Linux users:** After installation, make the shell script executable:
 ```bash
@@ -46,18 +46,6 @@ chmod +x build-update.sh
 ```
 
 ## Usage
-
-### If installed via npm (GitHub Packages)
-
-After installing globally with `npm install -g @mjthree/takserverupdate`, you can run:
-
-```bash
-tak-update-builder [folder_path]
-```
-
-Works on both Windows and Linux!
-
-### If installed from repository
 
 ### Windows
 

@@ -1,4 +1,4 @@
-name: Publish to GitHub Packages
+name: Create Release
 
 on:
   release:
@@ -6,30 +6,48 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write
     
     steps:
       - uses: actions/checkout@v3
       
-      - uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@mjthree'
       
       - name: Install dependencies
         run: |
           cd tak-update-builder
           npm ci
       
-      - name: Publish to GitHub Packages
+      - name: Create release archive
         run: |
           cd tak-update-builder
-          npm publish
+          tar -czf ../tak-update-builder-${{ github.ref_name }}.tar.gz .
+          cd ..
+          zip -r tak-update-builder-${{ github.ref_name }}.zip tak-update-builder/
+      
+      - name: Upload release assets
+        uses: actions/upload-release-asset@v1
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./tak-update-builder-${{ github.ref_name }}.tar.gz
+          asset_name: tak-update-builder-${{ github.ref_name }}.tar.gz
+          asset_content_type: application/gzip
+      
+      - name: Upload Windows release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./tak-update-builder-${{ github.ref_name }}.zip
+          asset_name: tak-update-builder-${{ github.ref_name }}.zip
+          asset_content_type: application/zip
 
