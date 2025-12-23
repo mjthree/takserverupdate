@@ -1,14 +1,24 @@
 {
-  "name": "tak-update-builder",
+  "name": "@mjthree/takserverupdate",
   "version": "1.0.0",
   "description": "Script to build product.inf and product.infz files for ATAK update server",
   "main": "build-update.js",
+  "bin": {
+    "tak-update-builder": "./build-update.js"
+  },
   "scripts": {
     "build": "node build-update.js"
   },
   "keywords": ["atak", "tak", "update", "server"],
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mjthree/takserverupdate.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "dependencies": {
     "jszip": "^3.10.1",
     "node-apk": "^1.2.0"
