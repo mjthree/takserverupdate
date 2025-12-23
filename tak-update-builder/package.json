@@ -1,0 +1,17 @@
+{
+  "name": "tak-update-builder",
+  "version": "1.0.0",
+  "description": "Script to build product.inf and product.infz files for ATAK update server",
+  "main": "build-update.js",
+  "scripts": {
+    "build": "node build-update.js"
+  },
+  "keywords": ["atak", "tak", "update", "server"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "node-apk": "^1.2.0"
+  }
+}
+

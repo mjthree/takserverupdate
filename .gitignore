@@ -1,0 +1,19 @@
+# Test and example folders
+Test/
+example*/
+atak-*/
+tak-server-*/
+tak-update-server-*/
+
+# Node modules
+node_modules/
+
+# Build outputs
+*.log
+product.inf
+product.infz
+
+# OS files
+.DS_Store
+Thumbs.db
+
