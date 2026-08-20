@@ -12,22 +12,50 @@ const OUTPUT_FILE = path.join(APK_FOLDER, 'product.infz');
 const OUTPUT_TXT = path.join(APK_FOLDER, 'product.inf');
 
 /**
- * Determine package type based on app ID
- * - com.atakmap.app.flavor.* = systemplugin
- * - com.atakmap.android.*.plugin = plugin
- * - Everything else = app
+ * Determine package type for product.inf column 2.
+ * ATAK only shows the Load checkbox when type is "plugin" (or "systemplugin").
+ *
+ * Rules (first match wins):
+ * - com.atakmap.app.flavor.* → systemplugin
+ * - Any * .plugin package id (official or third-party, e.g. com.apexshield.atak.plugin)
+ * - Manifest has plugin-api meta-data (ATAK plugin APK)
+ * - APK contains assets/plugin.xml (TAK plugin template)
+ * - Legacy: com.atakmap.android.*.plugin
+ * - Otherwise → app
  */
-function getPackageType(appId) {
-    // System plugins have pattern: com.atakmap.app.flavor.*
+function getPackageType(appId, hints = {}) {
     if (appId.startsWith('com.atakmap.app.flavor.')) {
         return 'systemplugin';
     }
-    // Regular plugins: com.atakmap.android.*.plugin
+    if (appId.endsWith('.plugin')) {
+        return 'plugin';
+    }
+    if (hints.hasPluginApi || hints.hasPluginXml) {
+        return 'plugin';
+    }
     if (appId.startsWith('com.atakmap.android') && appId.endsWith('.plugin')) {
         return 'plugin';
     }
-    // Everything else is an app
     return 'app';
+}
+
+function manifestHasPluginApi(manifest) {
+    const appChildren = manifest.raw?.children?.application?.[0]?.children;
+    if (!appChildren || !appChildren['meta-data']) {
+        return false;
+    }
+    return appChildren['meta-data'].some(
+        (meta) => meta.attributes?.name === 'plugin-api'
+    );
+}
+
+async function apkHasPluginXml(apk) {
+    try {
+        await apk.extract('assets/plugin.xml');
+        return true;
+    } catch (_e) {
+        return false;
+    }
 }
 
 /**
@@ -158,6 +186,9 @@ async function readApk(apkPath) {
         if (description) {
             description = description.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
         }
+
+        const hasPluginApi = manifestHasPluginApi(manifest);
+        const hasPluginXml = await apkHasPluginXml(apk);
         
         // Get file stats
         const stats = fs.statSync(apkPath);
@@ -183,7 +214,9 @@ async function readApk(apkPath) {
             iconPath: iconPath,
             hash: hash,
             size: stats.size,
-            filename: filename
+            filename: filename,
+            hasPluginApi: hasPluginApi,
+            hasPluginXml: hasPluginXml
         };
     } catch (e) {
         console.error(`Error reading APK ${apkPath}:`, e.message);
@@ -224,7 +257,10 @@ async function buildUpdateFiles() {
             continue;
         }
         
-        const type = getPackageType(pkg.appId);
+        const type = getPackageType(pkg.appId, {
+            hasPluginApi: pkg.hasPluginApi,
+            hasPluginXml: pkg.hasPluginXml
+        });
         const takPrereq = getTakPrereq(pkg.appId, pkg.version, pkg.filename);
         
         packages.push({

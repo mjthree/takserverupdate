@@ -157,7 +157,7 @@ The ATAK client will now check this URL for available plugins and apps. It will 
    - Icon
    - File hash (SHA256)
    - File size
-3. Determines package type (app, plugin, or systemplugin)
+3. Determines package type (app, plugin, or systemplugin) from package id and APK plugin markers (`plugin-api`, `assets/plugin.xml`, `*.plugin` suffix)
 4. Generates the `product.inf` CSV file
 5. Creates a ZIP file (`product.infz`) with the CSV and all icons
 
@@ -216,7 +216,7 @@ The ATAK client will now check this URL for available plugins and apps. It will 
 ## Notes
 
 - The script uses the APK manifest's `versionCode` (integer version code) for proper version comparison
-- Package types are automatically detected based on app ID patterns
+- Package types are detected from package id (`*.plugin`, `com.atakmap.app.flavor.*`) and ATAK plugin markers in the APK (`plugin-api` manifest meta-data, `assets/plugin.xml`)
 - Icons are extracted from APK files and included in the ZIP
 - If an APK cannot be processed, it will be skipped with an error message
 - The `product.infz` file must be accessible via HTTP/HTTPS from your TAK server's web content directory
